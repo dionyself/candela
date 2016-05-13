@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-from Bipolar_Stepper_Motor_Class import Bipolar_Stepper_Motor
+#from motor import Motor
 from numpy import abs,sqrt
 
 
