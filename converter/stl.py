@@ -10,6 +10,7 @@
 
 import ocl
 import logging
+import subproccess
 logging.basicConfig(level=20)
 
 __autor__ = "Dionys Rosario"
@@ -18,7 +19,9 @@ __credits__ = ["Jakob Flierl"]
 __licence__ = "Free BSD"
 __version__ = "0.0.1"
 
-def to_gcode(filename="./var/assets/sphere.stl"):
+def to_gcode(filename="./var/assets/sphere.stl", use_native=False):
+    if use_native:
+        return use_native(filename)
     zsafe = 5.0
     zstep = 3.0
     d = 2.0
@@ -90,16 +93,16 @@ def to_gcode(filename="./var/assets/sphere.stl"):
 
 def zigzag_x(minx, dx, maxx, miny, dy, maxy, z):
         p = ocl.Path()
-        rev = 0;
+        rev = 0
         while miny < maxy:
             if rev == 0:
                 p.append(ocl.Line(ocl.Point(minx, miny, z), ocl.Point(maxx, miny, z)))
                 rev = 1
             else:
-                p.append(Line(Point(maxx, miny, z), Point(minx, miny, z)));
+                p.append(Line(Point(maxx, miny, z), Point(minx, miny, z)))
                 rev = 0
             miny += dy
-        return p;
+        return p
 
 def zigzag_y(minx, dx, maxx, miny, dy, maxy, z):
         p = ocl.Path()
@@ -123,6 +126,9 @@ class GCodeWriter:
     def g0(x, y, z):
         print "G0 X%s Y%s Z%s" % (x, y, z)
 
+def native(filename):
+    return subprocess.call("cat %s | ./var/pkg/stl2ngc/stl2ngc" % filename, shell=True)
 
 if __name__ == "__main__":
-    to_gcode(filename="/dev/stdin")
+    to_gcode(use_native=True)
+    #  to_gcode(filename="/dev/stdin", use_native=True)
